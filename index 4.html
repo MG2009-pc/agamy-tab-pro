@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8" />
+
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<title>Hacker Style Login</title>
+
+<style>
+
+  /* Reset */
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html,body { height: 100%; }
+
+  body {
+
+    font-family: "Consolas", "Monaco", "Courier New", monospace;
+
+    background: #000;
+
+    color: #00ff6a;
+
+    overflow: hidden;
+
+  }
+
+  /* Fullscreen canvas for matrix rain */
+
+  #matrix {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 0;
+
+    display: block;
+
+  }
+
+  /* Subtle vignette to make center more readable */
+
+  .overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 30%, rgba(0,0,0,0.6) 100%);
+
+    z-index: 1;
+
+  }
+
+  /* Container centers the box */
+
+  .center {
+
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+  }
+
+  /* Hacker login box */
+
+  .login {
+
+    width: 360px;
+
+    max-width: calc(100% - 40px);
+
+    background: rgba(0,0,0,0.55);
+
+    border: 1px solid rgba(0,255,106,0.12);
+
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 30px rgba(0,255,106,0.03) inset;
+
+    border-radius: 8px;
+
+    padding: 28px;
+
+    backdrop-filter: blur(4px);
+
+    transform: translateY(-10px);
+
+    animation: floatIn 0.9s cubic-bezier(.2,.9,.3,1) both;
+
+  }
+
+  @keyframes floatIn {
+
+    from { opacity: 0; transform: translateY(20px) scale(.98); }
+
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+
+  }
+
+  .login h1 {
+
+    font-size: 20px;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 14px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+  }
+
+  Animated typing effect for title
+
+  .typing {
+
+    display:inline-block;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    max-width: 220px;
+
+    border-right: 2px solid rgba(0,255,106,0.9);
+
+    animation: typing 2.8s steps(22,end), blink 0.75s step-end infinite;
+
+  }
+
+  @keyframes typing {
+
+    from { max-width: 0; }
+
+    to   { max-width: 220px; }
+
+  }
+
+  @keyframes blink {
+
+    50% { border-color: transparent; }
+
+  }
+
+  .login .meta {
+
+    font-size: 11px;
+
+    color: rgba(0,255,106,0.7);
+
+    margin-bottom: 12px;
+
+  }
+
+  .field {
+
+    margin: 12px 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+  }
+
+  label {
+
+    font-size: 12px;
+
+    color: rgba(0,255,106,0.85);
+
+    margin-bottom: 6px;
+
+  }
+
+  input[type="text"], input[type="password"] {
+
+    padding: 12px 14px;
+
+    background: rgba(0,0,0,0.7);
+
+    border: 1px solid rgba(0,255,106,0.12);
+
+    color: #b3ffcc;
+
+    outline: none;
+
+    border-radius: 6px;
+
+    transition: box-shadow .18s, transform .12s;
+
+    font-family: inherit;
+
+  }
+
+  input::placeholder { color: rgba(179,255,204,0.35); }
+
+  input:focus {
+
+    box-shadow: 0 0 18px rgba(0,255,106,0.12), 0 0 6px rgba(0,255,106,0.04) inset;
+
+    transform: translateY(-1px);
+
+    border-color: rgba(0,255,106,0.35);
+
+  }
+
+  .actions {
+
+    margin-top: 14px;
+
+    display:flex;
+
+    gap:8px;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+  }
+
+  button {
+
+    padding: 10px 14px;
+
+    background: linear-gradient(180deg, rgba(0,255,106,0.12), rgba(0,255,106,0.06));
+
+    border: 1px solid rgba(0,255,106,0.15);
+
+    color: #001100;
+
+    font-weight: 700;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    min-width: 100px;
+
+    box-shadow: 0 6px 18px rgba(0,255,106,0.03);
+
+    transition: transform .12s ease, box-shadow .12s;
+
+  }
+
+  button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,255,106,0.06); }
+
+  .ghost {
+
+    background: transparent;
+
+    color: rgba(0,255,106,0.9);
+
+    border: 1px dashed rgba(0,255,106,0.12);
+
+    font-weight: 600;
+
+  }
+
+  .status {
+
+    margin-top:10px;
+
+    font-size:12px;
+
+    color: rgba(0,255,106,0.9);
+
+    min-height:18px;
+
+  }
+
+  /* small footer hints */
+
+  .hint {
+
+    margin-top:10px;
+
+    font-size:11px;
+
+    color: rgba(0,255,106,0.45);
+
+    display:flex;
+
+    justify-content:space-between;
+
+  }
+
+  /* Responsive */
+
+  @media (max-width:420px) {
+
+    .login { width: 92%; padding: 20px; }
+
+    .typing { max-width: 140px; }
+
+  }
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Canvas for matrix effect --> 
+
+
+<canvas id="matrix"></canvas>
+
+<div class="overlay"></div>
+
+<div class="center">
+
+
+
+  <div class="login" role="region" aria-label="Hacker login">
+      <center><h1 >SIGN IN AGAMY TAB WITH TOUR NAME</h1></center>
+<center><a href="index.html"><img src="back.png" width="200px"></a></center>
+
+    <h1>
+
+      <span class="typing">AUTHORIZING... // ACCESS</span>
+
+      <svg width="18" height="18" viewBox="0 0 24 24" style="opacity:.9">
+
+        <path fill="#00ff6a" d="M12 2L2 7v7c0 5 7 8 10 8s10-3 10-8V7l-10-5z"></path>
+
+      </svg>
+
+    </h1>
+
+    <div class="meta">SECURE TERMINAL v1.3</div>
+
+    <form id="loginForm" autocomplete="off" onsubmit="return false;">
+
+      <div class="field">
+
+        <label for="user">USERNAME</label>
+
+        <input id="user" type="text" placeholder="root" required />
+
+      </div>
+
+      <div class="field">
+
+        <label for="pass">PASSWORD</label>
+
+        <input id="pass" type="password" placeholder="••••••••" required />
+
+      </div>
+
+      <div class="actions">
+
+        <button id="enterBtn" type="submit">ENTER</button>
+
+        <button id="demoBtn" class="ghost" type="button">AUTO</button>
+
+      </div>
+
+      <div class="status" id="status"></div>
+
+      <div class="hint">
+
+        <span>Press ENTER to login</span>
+
+        <span style="opacity:.7">v1.3</span>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* MATRIX RAIN effect on canvas */
+
+(() => {
+
+  const canvas = document.getElementById('matrix');
+
+  const ctx = canvas.getContext('2d');
+
+  let w = canvas.width = innerWidth;
+
+  let h = canvas.height = innerHeight;
+
+  const cols = Math.floor(w / 18) + 1;
+
+  const yPositions = new Array(cols).fill(0);
+
+  function resetSize() {
+
+    w = canvas.width = innerWidth;
+
+    h = canvas.height = innerHeight;
+
+  }
+
+  addEventListener('resize', () => {
+
+    resetSize();
+
+  });
+
+  function draw() {
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.18)";
+
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.fillStyle = "#00ff6a";
+
+    ctx.font = "16px monospace";
+
+    for (let i = 0; i < yPositions.length; i++) {
+
+      const text = String.fromCharCode(33 + Math.random() * 94);
+
+      const x = i * 18;
+
+      const y = yPositions[i] * 18;
+
+      // bright lead char
+
+      ctx.fillStyle = "rgba(180,255,200,0.95)";
+
+      ctx.fillText(text, x, y);
+
+      // trail
+
+      for (let t = 1; t < 6; t++) {
+
+        ctx.fillStyle = "rgba(0,255,106," + (0.14 * (6 - t)) + ")";
+
+        ctx.fillText(text, x, y - (t * 16));
+
+      }
+
+      if (y > h + Math.random() * 10000) {
+
+        yPositions[i] = 0;
+
+      }
+
+      yPositions[i]++;
+
+    }
+
+    requestAnimationFrame(draw);
+
+  }
+
+  // initialize random starts
+
+  for (let i = 0; i < yPositions.length; i++) {
+
+    yPositions[i] = Math.floor(Math.random() * 100);
+
+  }
+
+  draw();
+
+})();
+
+/* Simple "auth" animation and demo auto-login */
+
+const status = document.getElementById('status');
+
+const enterBtn = document.getElementById('enterBtn');
+
+const demoBtn = document.getElementById('demoBtn');
+
+const user = document.getElementById('user');
+
+const pass = document.getElementById('pass');
+
+function showStatus(msg, ok=true) {
+
+  status.textContent = msg;
+
+  status.style.color = ok ? '#00ff6a' : '#ff6a6a';
+
+}
+
+/* Fake verification with animated dots */
+
+function fakeVerify(username, password) {
+
+  showStatus('Verifying credentials');
+
+  let dots = 0;
+
+  const interval = setInterval(() => {
+
+    dots = (dots + 1) % 5;
+
+    status.textContent = 'Verifying credentials' + '.'.repeat(dots);
+
+  }, 350);
+
+  setTimeout(() => {
+
+    clearInterval(interval);
+
+    if (username.toLowerCase() === 'root' && password === 'toor') {
+
+      showStatus('ACCESS GRANTED');
+
+      flashSuccess();
+
+    } else {
+
+      showStatus('ACCESS DENIED', false);
+
+      shakeLogin();
+
+    }
+
+  }, 1800 + Math.random() * 900);
+
+}
+
+/* small success flash effect */
+
+function flashSuccess() {
+
+  document.querySelector('.login').style.transition = 'box-shadow .3s, transform .3s';
+
+  document.querySelector('.login').style.boxShadow = '0 20px 60px rgba(0,255,106,0.12), 0 0 40px rgba(0,255,106,0.06)';
+
+  document.querySelector('.login').style.transform = 'translateY(-6px) scale(1.01)';
+
+  setTimeout(() => {
+
+    document.querySelector('.login').style.transform = '';
+
+  }, 800);
+
+}
+
+/* shake on fail */
+
+function shakeLogin() {
+
+  const el = document.querySelector('.login');
+
+  el.animate([
+
+    { transform: 'translateX(0)' },
+
+    { transform: 'translateX(-10px)' },
+
+    { transform: 'translateX(10px)' },
+
+    { transform: 'translateX(0)' }
+
+  ], { duration: 420, iterations: 1 });
+
+}
+
+/* Wiring buttons */
+
+enterBtn.addEventListener('click', () => {
+
+  fakeVerify(user.value.trim(), pass.value);
+
+});
+
+pass.addEventListener('keyup', (e) => {
+
+  if (e.key === 'Enter') fakeVerify(user.value.trim(), pass.value);
+
+});
+
+/* Demo auto fill */
+
+demoBtn.addEventListener('click', () => {
+
+  user.value = '';
+
+  pass.value = '';
+
+  showStatus('AUTO-COMPLETE [INITIALIZING]');
+
+  const demoUser = 'root';
+
+  const demoPass = 'toor';
+
+  let i = 0;
+
+  const t1 = setInterval(() => {
+
+    if (i < demoUser.length) user.value += demoUser[i++];
+
+    else clearInterval(t1);
+
+  }, 80);
+
+  setTimeout(() => {
+
+    let j = 0;
+
+    const t2 = setInterval(() => {
+
+      if (j < demoPass.length) pass.value += demoPass[j++];
+
+      else {
+
+        clearInterval(t2);
+
+        showStatus('CREDENTIALS READY');
+
+        setTimeout(() => fakeVerify(user.value, pass.value), 400);
+
+      }
+
+    }, 90);
+
+  }, demoUser.length * 80 + 200);
+
+});
+
+/* Accessibility: focus first input */
+
+user.focus();
+
+</script>
+
+</body>
+
+</html>

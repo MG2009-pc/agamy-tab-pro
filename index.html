@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icono.PNG" type="image/x-icon">
+    <title>AGAMY TAB OS </title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #020617;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Wallpapers */
+        .wallpaper-default {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #030712 100%);
+        }
+        .wallpaper-emerald {
+            background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #020617 100%);
+        }
+        .wallpaper-sunset {
+            background: linear-gradient(135deg, #4c1d95 0%, #831843 50%, #0f172a 100%);
+        }
+        .wallpaper-light {
+            background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 50%, #94a3b8 100%);
+            color: #0f172a !important;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .wallpaper-light .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #0f172a;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .squircle {
+            border-radius: 28px;
+        }
+
+        .squircle-icon {
+            border-radius: 22px;
+        }
+
+        /* App Icon Animations */
+        .app-item {
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .app-item:hover {
+            transform: translateY(-6px) scale(1.04);
+        }
+
+        .app-item:active {
+            transform: scale(0.95);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body id="os-body" class="wallpaper-default min-h-screen flex flex-col transition-all duration-500">
+
+    <!-- Android Top Status Bar -->
+    <header class="h-9 px-4 sm:px-8 flex justify-between items-center text-xs font-semibold z-50 sticky top-0 bg-slate-950/40 backdrop-blur-md border-b border-white/10 select-none">
+        <div class="flex items-center gap-4">
+            <span id="status-time" class="font-bold text-sm text-cyan-300">12:00 PM</span>
+            <span id="status-date" class="hidden sm:inline-block text-white/70">Fri, Oct 2</span>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-wifi text-emerald-400" title="Wi-Fi Connected"></i>
+            <i class="fa-solid fa-signal" title="Signal Full"></i>
+            <i class="fa-brands fa-bluetooth-b text-blue-400" title="Bluetooth On"></i>
+            <div class="flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded-full">
+                <i class="fa-solid fa-battery-full text-green-400 text-xs"></i>
+                <span class="text-[11px]">72%</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6 pb-24">
+
+        <!-- LOGO & HEADER WIDGET -->
+        <section class="glass-card squircle p-5 sm:p-6 flex flex-wrap items-center justify-between gap-6 relative overflow-hidden">
+            <div class="flex items-center gap-5 z-10">
+                <!-- AGAMY TAB Logo Slot -->
+                <div class="relative group">
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-slate-900 border-2 border-cyan-400/40 flex items-center justify-center overflow-hidden shadow-xl">
+                        <img src="agamoka.png" alt="AGAMY TAB LOGO" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/120x120/0f172a/00f2fe?text=AGAMY+TAB';">
+                    </div>
+                    <span class="absolute -bottom-1 -right-1 bg-cyan-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow">v14</span>
+                </div>
+
+                <!-- Brand Title Information -->
+                <div>
+                    <h1 class="text-2xl sm:text-4xl font-black tracking-tight drop-shadow">AGAMY TAB OS</h1>
+                    <p class="text-xs sm:text-sm text-cyan-300 font-bold mt-0.5">BY MOHAMED AGAMY • AGAMY ANDROID OPERATING SYSTEM</p>
+                    <div class="flex items-center gap-2 mt-2 flex-wrap">
+                        <span class="text-[11px] bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 px-2.5 py-0.5 rounded-full font-semibold">
+                            FOR HIGH SCHOOL TAB
+                        </span>
+                        <a href="ar.html" class="text-[11px] bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black px-3 py-0.5 rounded-full transition shadow">
+                            AR 🇪🇬
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mode Controls & Wallpaper Switcher -->
+            <div class="flex items-center gap-2 flex-wrap z-10">
+                <button onclick="setTheme('wallpaper-default')" class="px-3.5 py-2 rounded-xl glass-dark hover:bg-white/20 text-xs font-semibold flex items-center gap-1.5 transition">
+                    🌙 Dark Mode
+                </button>
+                <button onclick="setTheme('wallpaper-light')" class="px-3.5 py-2 rounded-xl bg-white/90 text-slate-900 hover:bg-white text-xs font-semibold flex items-center gap-1.5 transition shadow">
+                    ☀️ Light Mode
+                </button>
+                <button onclick="setTheme('wallpaper-emerald')" class="px-3.5 py-2 rounded-xl glass-dark hover:bg-white/20 text-xs font-semibold text-emerald-300 flex items-center gap-1.5 transition">
+                    🌴 Emerald
+                </button>
+                <button onclick="setTheme('wallpaper-sunset')" class="px-3.5 py-2 rounded-xl glass-dark hover:bg-white/20 text-xs font-semibold text-pink-300 flex items-center gap-1.5 transition">
+                    🌆 Sunset
+                </button>
+            </div>
+        </section>
+
+        <!-- DESKTOP WIDGETS GRID -->
+        <section class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            
+            <!-- Live Clock Widget -->
+            <div class="md:col-span-6 glass-card squircle p-6 flex flex-col justify-between relative overflow-hidden">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span id="widget-date-full" class="text-xs font-bold uppercase tracking-widest text-cyan-300">FRIDAY, OCTOBER 2</span>
+                        <div id="widget-time-full" class="text-4xl sm:text-5xl font-black tracking-tight mt-1">12:00 PM</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-2xl text-cyan-300 shadow">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                </div>
+                <div class="mt-6 pt-3 border-t border-white/10 flex justify-between items-center text-xs opacity-80">
+                    <span><i class="fa-solid fa-microchip text-emerald-400 mr-1"></i> Android 14 Core | 8 GB RAM</span>
+                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle text-[8px] mr-1"></i> System Ready</span>
+                </div>
+            </div>
+
+            <!-- Weather Widget -->
+            <div class="md:col-span-6 glass-card squircle p-6 flex flex-col justify-between bg-gradient-to-br from-blue-600/20 to-purple-600/20">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-blue-300">LIVE WEATHER</span>
+                        <h3 class="text-2xl font-black mt-0.5">Cairo, Egypt</h3>
+                        <p class="text-3xl font-black mt-1">28°C <span class="text-sm font-normal opacity-80">| Sunny</span></p>
+                    </div>
+                    <i class="fa-solid fa-sun text-5xl text-amber-400 drop-shadow-lg"></i>
+                </div>
+                <div class="mt-6 pt-3 border-t border-white/10 flex items-center gap-4 text-xs opacity-80">
+                    <span><i class="fa-solid fa-wind mr-1"></i> 14 km/h</span>
+                    <span><i class="fa-solid fa-droplet mr-1"></i> 40% Humidity</span>
+                </div>
+            </div>
+
+            <!-- Android 14 Search Bar Widget -->
+            <div class="md:col-span-12 glass-card squircle p-3 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-amber-400 text-lg ml-1">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <form action="https://duckduckgo.com/" method="GET" target="_blank" class="flex-1 flex items-center gap-2">
+                    <input type="text" name="q" placeholder="Tap to search here..." class="w-full bg-transparent border-none outline-none text-white placeholder-white/50 text-sm sm:text-base px-2">
+                    <button type="submit" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black px-6 py-2.5 rounded-xl text-sm transition shadow">
+                        Search
+                    </button>
+                </form>
+            </div>
+
+        </section>
+
+        <!-- APPLICATIONS LIST SECTION -->
+        <section>
+            <div class="flex items-center justify-between mb-4 px-1">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-grid-2 text-cyan-400 text-lg"></i>
+                    <h2 class="text-xl font-bold tracking-wide">Applications List</h2>
+                </div>
+                <span class="text-xs bg-white/10 px-3 py-1 rounded-full text-white/70">Tap icon to launch</span>
+            </div>
+
+            <div id="apps-container" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
+                <!-- App grid dynamically generated -->
+            </div>
+        </section>
+
+        <!-- TEACHERS PLATFORMS SECTION -->
+        <section class="pt-4">
+            <div class="glass-card squircle p-5 sm:p-6 bg-gradient-to-r from-emerald-900/30 to-teal-900/30">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 text-xl">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold">Teachers Platforms Section</h2>
+                        <p class="text-xs text-emerald-300">Direct links to top educational platforms</p>
+                    </div>
+                </div>
+
+                <div id="teachers-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
+                    <!-- Teachers list dynamically generated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- CREATIVITY & SHOWCASE SECTION -->
+        <section class="pt-4">
+            <div class="glass-card squircle p-6 text-center space-y-4 bg-gradient-to-b from-cyan-950/40 to-slate-950/60">
+                <h2 class="text-2xl font-black text-white">Creativity For All</h2>
+                
+                <div class="flex items-center justify-center gap-4 flex-wrap my-4">
+                    <img src="agamoka.png" alt="Agamoka" class="w-24 h-24 rounded-2xl object-cover glass-card p-1" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0f172a/ffffff?text=Agamoka';">
+                    <span class="text-cyan-400 text-xl font-bold">•</span>
+                    <img src="icono.PNG" alt="Icon" class="w-24 h-24 rounded-2xl object-cover glass-card p-1" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0f172a/ffffff?text=Icon';">
+                    <span class="text-cyan-400 text-xl font-bold">•</span>
+                    <img src="icon.png" alt="Tab" class="w-24 h-24 rounded-2xl object-cover glass-card p-1" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0f172a/ffffff?text=Tab';">
+                </div>
+
+                <div class="max-w-2xl mx-auto rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black">
+                    <video src="reco.mp4" controls class="w-full max-h-[320px] object-cover"></video>
+                </div>
+
+                <div class="pt-2">
+                    <h3 class="text-amber-400 font-bold">BY MOHAMED AGAMY</h3>
+                    <div class="flex items-center justify-center gap-4 mt-2 flex-wrap text-sm font-semibold">
+                        <a href="https://mg2009-pc.github.io/agamy-dev/" target="_blank" class="text-cyan-300 hover:text-cyan-200 underline">TAP TO GO TO OUR WEBSITE</a>
+                        <span>•</span>
+                        <a href="https://mg2009-pc.github.io/AAgamy-Office/" target="_blank" class="text-orange-400 hover:text-orange-300 underline">TAP TO GO TO AGAMY OFFICE</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SYSTEM NAVIGATION LINKS -->
+        <section class="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            
+            <a href="index 3.html" class="glass-card squircle p-5 text-center block hover:bg-white/15 transition group">
+                <div class="flex items-center justify-center gap-2 my-1">
+                    <img src="nx.png" alt="Next" class="w-10 h-10 object-contain group-hover:scale-110 transition" onerror="this.onerror=null; this.src='https://placehold.co/40x40/0f172a/ffffff?text=->';">
+                </div>
+                <h3 class="text-base font-bold text-white group-hover:text-cyan-300">Team Makers</h3>
+            </a>
+
+            <a href="index 4.html" class="glass-card squircle p-5 text-center block hover:bg-white/15 transition group">
+
+                <div class="flex items-center justify-center gap-2 my-1">
+                    <img src="nx.png" alt="Next" class="w-10 h-10 object-contain group-hover:scale-110 transition" onerror="this.onerror=null; this.src='https://placehold.co/40x40/0f172a/ffffff?text=->';">
+                </div>
+                <h3 class="text-base font-bold text-white group-hover:text-emerald-300">Sign In Screen</h3>
+            </a>
+
+            <a href="test.html" class="glass-card squircle p-5 text-center block hover:bg-white/15 transition group">
+  
+                <div class="flex items-center justify-center gap-2 my-1">
+                    <img src="nx.png" alt="Next" class="w-10 h-10 object-contain group-hover:scale-110 transition" onerror="this.onerror=null; this.src='https://placehold.co/40x40/0f172a/ffffff?text=->';">
+                </div>
+                <h3 class="text-base font-bold text-white group-hover:text-amber-300">Old Version 1.4.19</h3>
+            </a>
+
+        </section>
+
+    </main>
+
+    <!-- Android Taskbar / Dock Bar -->
+    <footer class="fixed bottom-0 inset-x-0 h-16 glass-dark border-t border-white/10 z-50 px-6 flex items-center justify-between">
+        
+        <!-- Dock Shortcuts (Left) -->
+        <div class="flex items-center gap-3">
+            <a href="https://chatgpt.com/" target="_blank" class="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center text-white text-lg hover:scale-110 transition shadow">
+                <i class="fa-solid fa-robot"></i>
+            </a>
+            <a href="https://www.youtube.com/" target="_blank" class="w-10 h-10 rounded-2xl bg-red-600 flex items-center justify-center text-white text-lg hover:scale-110 transition shadow">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://vscode.dev/" target="_blank" class="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center text-white text-lg hover:scale-110 transition shadow">
+                <i class="fa-solid fa-code"></i>
+            </a>
+        </div>
+
+        <!-- Android Nav Bar Controls (Center) -->
+        <div class="flex items-center gap-8 text-white/80">
+            <button onclick="window.history.back()" class="hover:text-cyan-400 p-2 active:scale-90 transition" title="Back">
+                <i class="fa-solid fa-chevron-left text-lg"></i>
+            </button>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center active:scale-90 transition shadow" title="Home">
+                <div class="w-4 h-4 rounded-full border-2 border-white"></div>
+            </button>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="hover:text-cyan-400 p-2 active:scale-90 transition" title="Top">
+                <i class="fa-regular fa-square text-lg"></i>
+            </button>
+        </div>
+
+        <!-- System Version Label (Right) -->
+        <div class="hidden sm:flex items-center gap-2 text-xs font-bold text-cyan-300">
+            <span>AGAMY TAB OS</span>
+        </div>
+    </footer>
+
+    <script>
+        // Applications Master Data with Local Image Paths
+        const appList = [
+            { name: "Facebook", img: "face.jpeg", url: "https://www.facebook.com/?locale=ar_AR", fallbackIcon: "fa-brands fa-facebook", color: "text-blue-400" },
+            { name: "YouTube", img: "you.png", url: "https://www.youtube.com/", fallbackIcon: "fa-brands fa-youtube", color: "text-red-500" },
+            { name: "Instagram", img: "inst.jpg", url: "https://www.instagram.com/", fallbackIcon: "fa-brands fa-instagram", color: "text-pink-500" },
+            { name: "TikTok", img: "tik.png", url: "https://www.tiktok.com/en/", fallbackIcon: "fa-brands fa-tiktok", color: "text-white" },
+            { name: "WhatsApp", img: "whats.jpeg", url: "https://web.whatsapp.com/", fallbackIcon: "fa-brands fa-whatsapp", color: "text-green-400" },
+            { name: "Telegram", img: "tle.jpeg", url: "https://web.telegram.org/", fallbackIcon: "fa-brands fa-telegram", color: "text-sky-400" },
+            { name: "Messenger", img: "Messenger-3-2.png", url: "https://www.messenger.com/", fallbackIcon: "fa-brands fa-facebook-messenger", color: "text-blue-500" },
+            { name: "Zoom", img: "zoom.jpeg", url: "https://www.zoom.com/", fallbackIcon: "fa-solid fa-video", color: "text-cyan-400" },
+            { name: "GTA VC", img: "gta 7.jpg", url: "https://quenq.com/apps/vice-city/", fallbackIcon: "fa-solid fa-car", color: "text-pink-400" },
+            { name: "GTA III", img: "gta 3.jpg", url: "https://quenq.com/apps/iii-online/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
+                        { name: "MINCRAFT", img: "minc.jpg", url: "https://quenq.com/apps/minecraft/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
+            { name: "Office", img: "off.jpeg", url: "https://mg2009-pc.github.io/AAgamy-Office/", fallbackIcon: "fa-solid fa-file-lines", color: "text-orange-400" },
+            { name: "ChatGPT", img: "CHAT.png", url: "https://chatgpt.com/", fallbackIcon: "fa-solid fa-robot", color: "text-emerald-400" },
+            { name: "GAMES", img: "tanzeel.png", url: "https://poki.com/ar", fallbackIcon: "fa-solid fa-gamepad", color: "text-purple-400" },
+            { name: "Android", img: "an.jfif", url: "https://www.myandroid.org/run/start.php", fallbackIcon: "fa-brands fa-android", color: "text-green-500" },
+            { name: "Apple", img: "app.png", url: "https://appetize.io/app/standalone_qr7jnxgnu7zotda4rjtsggv3re?device=iphone14pro&osVersion=16.2&toolbar=true", fallbackIcon: "fa-brands fa-apple", color: "text-white" },
+            { name: "1V1 lol", img: "1v.jfif", url: "https://1v1.lol/", fallbackIcon: "fa-solid fa-crosshairs", color: "text-amber-500" },
+            { name: "Photopea", img: "pp.png", url: "https://www.photopea.com/", fallbackIcon: "fa-solid fa-image", color: "text-teal-400" },
+            { name: "Meta AI", img: "m.jpg", url: "https://www.meta.ai/?__pwa=1", fallbackIcon: "fa-solid fa-brain", color: "text-purple-400" },
+            { name: "Maps", img: "gg.jpg", url: "https://maps.google.com/maps", fallbackIcon: "fa-solid fa-map-location-dot", color: "text-yellow-400" },
+            { name: "Unity", img: "U.png", url: "https://play.unity.com/en/studio", fallbackIcon: "fa-solid fa-cubes", color: "text-slate-100" },
+            { name: "DuckDuckGo", img: "dd.png", url: "https://duckduckgo.com/", fallbackIcon: "fa-solid fa-magnifying-glass", color: "text-orange-500" },
+            { name: "Noon", img: "no.png", url: "https://student.noonacademy.com/", fallbackIcon: "fa-solid fa-book-open", color: "text-amber-400" },
+            { name: "Quran Kareem", img: "LL.png", url: "https://app.quranflash.com/book/Medina1?ar#/reader", fallbackIcon: "fa-solid fa-book-quran", color: "text-emerald-400" },
+            { name: "Y8 Games", img: "ee.png", url: "https://ar.y8.com/", fallbackIcon: "fa-solid fa-dice", color: "text-red-400" },
+            { name: "Roblox", img: "ro.jpg", url: "https://www.roblox.com/ar/home", fallbackIcon: "fa-solid fa-cube", color: "text-gray-200" },
+            { name: "Snapdrop", img: "s.png", url: "https://snapdrop.net/", fallbackIcon: "fa-solid fa-share-nodes", color: "text-blue-400" },
+            { name: "PT Table", img: "pt.png", url: "https://ptable.com/?lang=ar#%D8%AE%D8%A7%D8%B5%D9%8A%D8%A9", fallbackIcon: "fa-solid fa-atom", color: "text-purple-400" },
+            { name: "Car Map", img: "c.jpg", url: "https://framesynthesis.com/drivingsimulator/maps/#google_vignette", fallbackIcon: "fa-solid fa-route", color: "text-slate-300" },
+            { name: "Slowroads", img: "sl.jpg", url: "https://slowroads.io/", fallbackIcon: "fa-solid fa-road", color: "text-green-400" },
+            { name: "Ludo", img: "lu.jpg", url: "https://ludoking.com/play/", fallbackIcon: "fa-solid fa-border-all", color: "text-yellow-400" },
+            { name: "Chess", img: "mmmm.png", url: "https://www.chess.com/", fallbackIcon: "fa-solid fa-chess", color: "text-emerald-500" },
+            { name: "Paco Way", img: "poco.png", url: "https://pakohighway.online/", fallbackIcon: "fa-solid fa-flag-checkered", color: "text-red-500" },
+            { name: "Cars Drive", img: "pod.png", url: "https://bruno-simon.com/", fallbackIcon: "fa-solid fa-gauge-high", color: "text-orange-500" },
+            { name: "Townscaper", img: "scra.jfif", url: "https://www.townscapergame.com/", fallbackIcon: "fa-solid fa-building", color: "text-cyan-400" },
+            { name: "Windows 95", img: "wi.jpg", url: "https://www.windows93.net/", fallbackIcon: "fa-brands fa-windows", color: "text-teal-400" },
+            { name: "VS Code", img: "vs.jpg", url: "https://vscode.dev/", fallbackIcon: "fa-solid fa-code", color: "text-blue-400" },
+            { name: "Windows 7", img: "7.jpg", url: "https://win7simu.visnalize.com/", fallbackIcon: "fa-brands fa-windows", color: "text-sky-400" },
+            { name: "Windows 10", img: "10.png", url: "https://win10.webjeet.me/#", fallbackIcon: "fa-brands fa-windows", color: "text-blue-500" },
+            { name: "Windows 11", img: "11.png", url: "https://win11.blueedge.me/", fallbackIcon: "fa-brands fa-windows", color: "text-cyan-300" },
+            { name: "Whiteboard", img: "boa.png", url: "https://www.tutorialspoint.com/whiteboard.htm", fallbackIcon: "fa-solid fa-pen-to-square", color: "text-blue-400" },
+            { name: "WE Cima", img: "WE.jpeg", url: "https://wecima.watch/", fallbackIcon: "fa-solid fa-film", color: "text-indigo-400" },
+            { name: "ArabSeed", img: "ar.jpeg", url: "https://m.arabseed.show/", fallbackIcon: "fa-solid fa-video", color: "text-rose-500" },
+            { name: "Bein Live", img: "Bein.png", url: "https://live.aflam4you.net/browse-watch-koora_live-tv-live-videos-1-date.html", fallbackIcon: "fa-solid fa-tv", color: "text-purple-400" },
+            { name: "Kora Live", img: "yala.jpg", url: "https://dramalive.net/", fallbackIcon: "fa-solid fa-futbol", color: "text-emerald-400" }
+        ];
+
+        // Teachers Data
+        const teacherList = [
+            { name: "Ahmed Elabd", img: "abd.jpg", url: "https://eng-ahmed-elabd.com/", color: "text-pink-400" },
+            { name: "Fathy Elzayat", img: "zayat.jpg", url: "https://dr-fathy-elzayat.com/", color: "text-amber-400" },
+            { name: "Khaled Sakr", img: "sakr.jpg", url: "https://khaled-sakr.com/", color: "text-red-500" },
+            { name: "Mohamed Agamy", img: "mohamed.png", url: "https://mg2009-pc.github.io/agamy-dev/", color: "text-cyan-400", label: "Web Owner" },
+            { name: "Mohamed Salah", img: "salah.jpg", url: "https://bassthalk.com/teacher/3", color: "text-emerald-400" },
+            { name: "Mohamed Elhadad", img: "hadad.PNG", url: "https://www.mr-elhadad.com/", color: "text-yellow-400" },
+            { name: "Mostafa Elaskary", img: "askery.jpg", url: "https://dr-mostafa-elaskary.com/", color: "text-purple-400" }
+        ];
+
+        // Render Apps Grid
+        function renderApps() {
+            const container = document.getElementById('apps-container');
+            container.innerHTML = appList.map(app => `
+                <a href="${app.url}" target="_blank" class="app-item glass-card squircle p-3 flex flex-col items-center justify-center text-center group cursor-pointer decoration-none">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 squircle-icon bg-slate-900/60 border border-white/10 flex items-center justify-center overflow-hidden mb-2 shadow-md relative">
+                        <img src="${app.img}" alt="${app.name}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="hidden w-full h-full items-center justify-center text-2xl ${app.color}">
+                            <i class="${app.fallbackIcon}"></i>
+                        </div>
+                    </div>
+                    <span class="text-xs font-medium text-white/90 truncate w-full group-hover:text-cyan-300 transition-colors">${app.name}</span>
+                </a>
+            `).join('');
+        }
+
+        // Render Teachers Grid
+        function renderTeachers() {
+            const container = document.getElementById('teachers-container');
+            container.innerHTML = teacherList.map(t => `
+                <a href="${t.url}" target="_blank" class="app-item glass-card squircle p-3 flex flex-col items-center text-center group cursor-pointer decoration-none">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 squircle-icon bg-slate-900/60 border border-white/10 flex items-center justify-center overflow-hidden mb-2 shadow-md relative">
+                        <img src="${t.img}" alt="${t.name}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="hidden w-full h-full items-center justify-center text-2xl ${t.color}">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold text-white truncate w-full group-hover:text-cyan-300">${t.name}</span>
+                    ${t.label ? `<span class="text-[10px] text-amber-400 font-bold mt-0.5">${t.label}</span>` : ''}
+                </a>
+            `).join('');
+        }
+
+        // Theme Switcher
+        function setTheme(themeClass) {
+            const body = document.getElementById('os-body');
+            body.className = `min-h-screen flex flex-col transition-all duration-500 ${themeClass}`;
+        }
+
+        // Clock Update Function
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+
+            const timeStr = `${hours}:${minutes} ${ampm}`;
+            document.getElementById('status-time').innerText = timeStr;
+            document.getElementById('widget-time-full').innerText = timeStr;
+
+            const optionsStatus = { weekday: 'short', month: 'short', day: 'numeric' };
+            document.getElementById('status-date').innerText = now.toLocaleDateString('en-US', optionsStatus);
+
+            const optionsWidget = { weekday: 'long', month: 'long', day: 'numeric' };
+            document.getElementById('widget-date-full').innerText = now.toLocaleDateString('en-US', optionsWidget).toUpperCase();
+        }
+
+        // Service Worker Registration
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("service-worker.js").catch(() => {});
+            });
+        }
+
+        // Initialize Page
+        window.onload = function() {
+            renderApps();
+            renderTeachers();
+            updateClock();
+            setInterval(updateClock, 1000);
+        };
+    </script>
+</body>
+</html>
