@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="icono.PNG" type="image/x-icon">
-    <title>AGAMY TAB OS </title>
+    <title>AGAMY TAB OS</title>
     <meta name="google-site-verification" content="N9FVzGmlCZpkUCBaeqTcCR3Dn4_PVE82d9F1TfhGoGU" />
     <meta name="description" content="AGAMY TAB OS - for high school tablet ,by mohamed agamy.">
-    <meta name="keywords" content="AGAMY TAB , AGAMY  OPERATING SYSTEM, mohamed agamy, محمد عجمي, عجمي تاب, web apps, educational platforms">
+    <meta name="keywords" content="AGAMY TAB , AGAMY OPERATING SYSTEM, mohamed agamy, محمد عجمي, عجمي تاب, web apps, educational platforms">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
     <link rel="apple-touch-icon" href="icon-192.png">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Roboto -->
+    <!-- Google Fonts: Cairo & Roboto -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Roboto', 'sans-serif'],
+                        sans: [ 'Roboto', 'sans-serif'],
                     },
                 }
             }
@@ -40,7 +40,7 @@
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Cairo', 'Roboto', sans-serif;
             background: #020617;
             margin: 0;
             padding: 0;
@@ -81,7 +81,7 @@
         }
 
         .glass-dark {
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.9);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.12);
@@ -95,7 +95,6 @@
             border-radius: 22px;
         }
 
-        /* App Icon Animations */
         .app-item {
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -108,7 +107,6 @@
             transform: scale(0.95);
         }
 
-        /* Custom Scrollbars */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -119,30 +117,140 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
     </style>
 </head>
 <body id="os-body" class="wallpaper-default min-h-screen flex flex-col transition-all duration-500">
 
-    <!-- Android Top Status Bar -->
-    <header class="h-9 px-4 sm:px-8 flex justify-between items-center text-xs font-semibold z-50 sticky top-0 bg-slate-950/40 backdrop-blur-md border-b border-white/10 select-none">
+    <!-- Brightness Overlay -->
+    <div id="brightness-overlay" class="fixed inset-0 pointer-events-none z-40 transition-all duration-200" style="background: rgba(0,0,0,0);"></div>
+
+    <!-- Android Top Status Bar (Clickable to open Control Center) -->
+    <header onclick="toggleControlCenter()" class="h-9 px-4 sm:px-8 flex justify-between items-center text-xs font-semibold z-50 sticky top-0 bg-slate-950/60 backdrop-blur-md border-b border-white/10 cursor-pointer select-none">
         <div class="flex items-center gap-4">
-            <span id="status-time" class="font-bold text-sm text-cyan-300">12:00 PM</span>
-            <span id="status-date" class="hidden sm:inline-block text-white/70">Fri, Oct 2</span>
+            <span id="status-time" class="font-bold text-sm text-cyan-300">12:00 م</span>
+            <span id="status-date" class="hidden sm:inline-block text-white/70">الجمعة، 2 أكتوبر</span>
         </div>
         
         <div class="flex items-center gap-3">
-            <i class="fa-solid fa-wifi text-emerald-400" title="Wi-Fi Connected"></i>
-            <i class="fa-solid fa-signal" title="Signal Full"></i>
-            <i class="fa-brands fa-bluetooth-b text-blue-400" title="Bluetooth On"></i>
+            <i id="ico-wifi" class="fa-solid fa-wifi text-emerald-400" title="Wi-Fi متصل"></i>
+            <i class="fa-solid fa-signal" title="الشبكة قوية"></i>
+            <i id="ico-bt" class="fa-brands fa-bluetooth-b text-blue-400" title="البلوتوث مفعل"></i>
+            <i id="ico-dnd" class="fa-solid fa-bell-slash text-amber-400 hidden" title="وضع عدم الإزعاج"></i>
+            <i id="ico-plane" class="fa-solid fa-plane text-sky-300 hidden" title="وضع الطيران"></i>
             <div class="flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded-full">
                 <i class="fa-solid fa-battery-full text-green-400 text-xs"></i>
                 <span class="text-[11px]">72%</span>
             </div>
+            <i class="fa-solid fa-sliders text-cyan-300 ml-2" title="لوحة التحكم"></i>
         </div>
     </header>
+
+    <!-- Android Control Center & Notifications Panel (Modal) -->
+    <div id="control-center-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 hidden items-start justify-center pt-12 px-4">
+        <div class="glass-dark rounded-3xl p-6 max-w-md w-full space-y-6 border border-white/20 shadow-2xl animate-in fade-in zoom-in duration-200">
+            <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-cyan-400"></i> لوحة تحكم أندرويد
+                </h3>
+                <button onclick="toggleControlCenter()" class="text-white/70 hover:text-white text-xl p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Quick Toggles Grid -->
+            <div class="grid grid-cols-3 gap-3">
+                <button onclick="toggleSetting('wifi')" id="btn-wifi" class="p-3 rounded-2xl glass-card flex flex-col items-center justify-center gap-2 text-xs font-bold transition bg-cyan-500/20 text-cyan-300 border-cyan-400/40">
+                    <i class="fa-solid fa-wifi text-lg"></i> Wi-Fi
+                </button>
+                <button onclick="toggleSetting('bt')" id="btn-bt" class="p-3 rounded-2xl glass-card flex flex-col items-center justify-center gap-2 text-xs font-bold transition bg-blue-500/20 text-blue-300 border-blue-400/40">
+                    <i class="fa-brands fa-bluetooth-b text-lg"></i> البلوتوث
+                </button>
+                <button onclick="toggleSetting('sound')" id="btn-sound" class="p-3 rounded-2xl glass-card flex flex-col items-center justify-center gap-2 text-xs font-bold transition bg-emerald-500/20 text-emerald-300 border-emerald-400/40">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-lg"></i> الصوت
+                </button>
+                <button onclick="toggleSetting('plane')" id="btn-plane" class="p-3 rounded-2xl glass-card flex flex-col items-center justify-center gap-2 text-xs font-bold transition bg-white/5 text-white/70">
+                    <i class="fa-solid fa-plane text-lg"></i> وضع الطيران
+                </button>
+                <button onclick="toggleSetting('dnd')" id="btn-dnd" class="p-3 rounded-2xl glass-card flex flex-col items-center justify-center gap-2 text-xs font-bold transition bg-white/5 text-white/70">
+                    <i class="fa-solid fa-bell-slash text-lg"></i> عدم الإزعاج
+                </button>
+                <button onclick="openSettingsModal()" class="p-3 rounded-2xl glass-card flex flex-col items-center justify-center gap-2 text-xs font-bold transition bg-amber-500/20 text-amber-300 border-amber-400/30">
+                    <i class="fa-solid fa-gear text-lg"></i> الإعدادات
+                </button>
+            </div>
+
+            <!-- Brightness Slider -->
+            <div class="space-y-2 bg-white/5 p-4 rounded-2xl border border-white/10">
+                <div class="flex justify-between text-xs font-semibold text-white/80">
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-sun text-amber-400"></i> سطوع الشاشة</span>
+                    <span id="brightness-val">100%</span>
+                </div>
+                <input type="range" min="10" max="100" value="100" oninput="changeBrightness(this.value)" class="w-full accent-cyan-400 cursor-pointer">
+            </div>
+
+            <!-- Notifications Drawer Section -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-center text-xs text-white/70">
+                    <span class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-bell text-cyan-400"></i> الإشعارات الأخيرة</span>
+                    <button onclick="clearNotifications()" class="text-red-400 hover:underline">مسح الكل</button>
+                </div>
+                <div id="notifications-list" class="space-y-2 max-h-40 overflow-y-auto">
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-xs flex items-start gap-3">
+                        <i class="fa-solid fa-circle-info text-cyan-400 mt-0.5"></i>
+                        <div>
+                            <p class="font-bold">مرحباً بك في AGAMY TAB OS</p>
+                            <p class="text-white/60 text-[11px]">النظام يعمل بكفاءة عالية وجاهز للاستخدام.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Settings Modal Window -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="glass-dark rounded-3xl p-6 max-w-xl w-full space-y-6 border border-white/20 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                <h3 class="font-bold text-xl text-white flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-cyan-400"></i> إعدادات النظام
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-white/70 hover:text-white text-xl p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Wallpapers Section -->
+            <div class="space-y-3">
+                <h4 class="text-sm font-bold text-cyan-300">تخصيص الخلفيات</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <button onclick="setTheme('wallpaper-default')" class="p-3 rounded-2xl glass-card text-xs font-bold hover:bg-white/20 transition">داكن افتراضي</button>
+                    <button onclick="setTheme('wallpaper-emerald')" class="p-3 rounded-2xl glass-card text-xs font-bold hover:bg-white/20 text-emerald-300 transition">أخضر زمردي</button>
+                    <button onclick="setTheme('wallpaper-sunset')" class="p-3 rounded-2xl glass-card text-xs font-bold hover:bg-white/20 text-pink-300 transition">غروب ساطع</button>
+                    <button onclick="setTheme('wallpaper-light')" class="p-3 rounded-2xl bg-white text-slate-900 text-xs font-bold transition">وضع نهاري</button>
+                </div>
+                <div class="pt-2">
+                    <label class="block text-xs font-semibold mb-1 text-white/80">رفع خلفية مخصصة من جهازك:</label>
+                    <input type="file" accept="image/*" onchange="uploadCustomWallpaper(event)" class="w-full text-xs text-white/70 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cyan-500 file:text-slate-950 hover:file:bg-cyan-400 cursor-pointer">
+                </div>
+            </div>
+
+            <!-- App Folders Management -->
+            <div class="space-y-3 pt-3 border-t border-white/10">
+                <h4 class="text-sm font-bold text-cyan-300">إدارة مجلدات التطبيقات</h4>
+                <div class="flex gap-2">
+                    <input type="text" id="new-folder-name" placeholder="اسم المجلد الجديد..." class="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-cyan-400">
+                    <button onclick="createNewFolder()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition">إنشاء مجلد</button>
+                </div>
+                <div id="folders-management-list" class="space-y-2">
+                    <!-- Folders rendered here -->
+                </div>
+            </div>
+
+            <div class="pt-4 text-center">
+                <button onclick="closeSettingsModal()" class="bg-white/10 hover:bg-white/20 text-white font-bold px-6 py-2 rounded-xl text-xs transition">حفظ وإغلاق</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6 pb-24">
@@ -169,6 +277,9 @@
                         <a href="ar.html" class="text-[11px] bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black px-3 py-0.5 rounded-full transition shadow">
                             AR 🇪🇬
                         </a>
+                        <button onclick="openSettingsModal()" class="text-[11px] bg-white/10 hover:bg-white/20 text-white font-bold px-3 py-0.5 rounded-full transition flex items-center gap-1">
+                            <i class="fa-solid fa-gear"></i> الإعدادات
+                        </button>
                     </div>
                 </div>
             </div>
@@ -197,8 +308,8 @@
             <div class="md:col-span-6 glass-card squircle p-6 flex flex-col justify-between relative overflow-hidden">
                 <div class="flex justify-between items-start">
                     <div>
-                        <span id="widget-date-full" class="text-xs font-bold uppercase tracking-widest text-cyan-300">FRIDAY, OCTOBER 2</span>
-                        <div id="widget-time-full" class="text-4xl sm:text-5xl font-black tracking-tight mt-1">12:00 PM</div>
+                        <span id="widget-date-full" class="text-xs font-bold uppercase tracking-widest text-cyan-300">الجمعة، 2 أكتوبر</span>
+                        <div id="widget-time-full" class="text-4xl sm:text-5xl font-black tracking-tight mt-1">12:00 م</div>
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-2xl text-cyan-300 shadow">
                         <i class="fa-solid fa-clock"></i>
@@ -206,7 +317,7 @@
                 </div>
                 <div class="mt-6 pt-3 border-t border-white/10 flex justify-between items-center text-xs opacity-80">
                     <span><i class="fa-solid fa-microchip text-emerald-400 mr-1"></i> Android 14 Core | 8 GB RAM</span>
-                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle text-[8px] mr-1"></i> System Ready</span>
+                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle text-[8px] mr-1"></i> النظام جاهز</span>
                 </div>
             </div>
 
@@ -214,31 +325,36 @@
             <div class="md:col-span-6 glass-card squircle p-6 flex flex-col justify-between bg-gradient-to-br from-blue-600/20 to-purple-600/20">
                 <div class="flex justify-between items-start">
                     <div>
-                        <span class="text-xs font-bold uppercase tracking-widest text-blue-300">LIVE WEATHER</span>
-                        <h3 class="text-2xl font-black mt-0.5">Cairo, Egypt</h3>
-                        <p class="text-3xl font-black mt-1">28°C <span class="text-sm font-normal opacity-80">| Sunny</span></p>
+                        <span class="text-xs font-bold uppercase tracking-widest text-blue-300">حالة الطقس</span>
+                        <h3 class="text-2xl font-black mt-0.5">القاهرة، مصر</h3>
+                        <p class="text-3xl font-black mt-1">28°م <span class="text-sm font-normal opacity-80">| مشمس</span></p>
                     </div>
                     <i class="fa-solid fa-sun text-5xl text-amber-400 drop-shadow-lg"></i>
                 </div>
                 <div class="mt-6 pt-3 border-t border-white/10 flex items-center gap-4 text-xs opacity-80">
-                    <span><i class="fa-solid fa-wind mr-1"></i> 14 km/h</span>
-                    <span><i class="fa-solid fa-droplet mr-1"></i> 40% Humidity</span>
+                    <span><i class="fa-solid fa-wind ml-1"></i> 14 كم/س</span>
+                    <span><i class="fa-solid fa-droplet ml-1"></i> 40% رطوبة</span>
                 </div>
             </div>
 
             <!-- Android 14 Search Bar Widget -->
             <div class="md:col-span-12 glass-card squircle p-3 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-amber-400 text-lg ml-1">
+                <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-amber-400 text-lg mr-1">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
                 <form action="https://duckduckgo.com/" method="GET" target="_blank" class="flex-1 flex items-center gap-2">
-                    <input type="text" name="q" placeholder="Tap to search here..." class="w-full bg-transparent border-none outline-none text-white placeholder-white/50 text-sm sm:text-base px-2">
+                    <input type="text" name="q" placeholder="ابحث في الويب هنا..." class="w-full bg-transparent border-none outline-none text-white placeholder-white/50 text-sm sm:text-base px-2">
                     <button type="submit" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black px-6 py-2.5 rounded-xl text-sm transition shadow">
-                        Search
+                        بحث
                     </button>
                 </form>
             </div>
 
+        </section>
+
+        <!-- APP FOLDERS SECTION -->
+        <section id="folders-section" class="space-y-4">
+            <!-- Rendered Folders -->
         </section>
 
         <!-- APPLICATIONS LIST SECTION -->
@@ -246,9 +362,9 @@
             <div class="flex items-center justify-between mb-4 px-1">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-grid-2 text-cyan-400 text-lg"></i>
-                    <h2 class="text-xl font-bold tracking-wide">Applications List</h2>
+                    <h2 class="text-xl font-bold tracking-wide">قائمة التطبيقات</h2>
                 </div>
-                <span class="text-xs bg-white/10 px-3 py-1 rounded-full text-white/70">Tap icon to launch</span>
+                <span class="text-xs bg-white/10 px-3 py-1 rounded-full text-white/70">اضغط لفتح التطبيق</span>
             </div>
 
             <div id="apps-container" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
@@ -264,8 +380,8 @@
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold">Teachers Platforms Section</h2>
-                        <p class="text-xs text-emerald-300">Direct links to top educational platforms</p>
+                        <h2 class="text-xl font-bold">منصات المدرسين</h2>
+                        <p class="text-xs text-emerald-300">روابط مباشرة لأبرز المنصات التعليمية</p>
                     </div>
                 </div>
 
@@ -278,7 +394,7 @@
         <!-- CREATIVITY & SHOWCASE SECTION -->
         <section class="pt-4">
             <div class="glass-card squircle p-6 text-center space-y-4 bg-gradient-to-b from-cyan-950/40 to-slate-950/60">
-                <h2 class="text-2xl font-black text-white">Creativity For All</h2>
+                <h2 class="text-2xl font-black text-white">إبداع بلا حدود</h2>
                 
                 <div class="flex items-center justify-center gap-4 flex-wrap my-4">
                     <img src="agamoka.png" alt="Agamoka" class="w-24 h-24 rounded-2xl object-cover glass-card p-1" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0f172a/ffffff?text=Agamoka';">
@@ -295,9 +411,9 @@
                 <div class="pt-2">
                     <h3 class="text-amber-400 font-bold">BY MOHAMED AGAMY</h3>
                     <div class="flex items-center justify-center gap-4 mt-2 flex-wrap text-sm font-semibold">
-                        <a href="https://mg2009-pc.github.io/agamy-dev/" target="_blank" class="text-cyan-300 hover:text-cyan-200 underline">TAP TO GO TO OUR WEBSITE</a>
+                        <a href="https://mg2009-pc.github.io/agamy-dev/" target="_blank" class="text-cyan-300 hover:text-cyan-200 underline">زيارة موقعنا الرسمي</a>
                         <span>•</span>
-                        <a href="https://mg2009-pc.github.io/AAgamy-Office/" target="_blank" class="text-orange-400 hover:text-orange-300 underline">TAP TO GO TO AGAMY OFFICE</a>
+                        <a href="https://mg2009-pc.github.io/AAgamy-Office/" target="_blank" class="text-orange-400 hover:text-orange-300 underline">مكتبة أوركيد AGAMY OFFICE</a>
                     </div>
                 </div>
             </div>
@@ -305,41 +421,37 @@
 
         <!-- SYSTEM NAVIGATION LINKS -->
         <section class="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            
             <a href="index 3.html" class="glass-card squircle p-5 text-center block hover:bg-white/15 transition group">
                 <div class="flex items-center justify-center gap-2 my-1">
                     <img src="nx.png" alt="Next" class="w-10 h-10 object-contain group-hover:scale-110 transition" onerror="this.onerror=null; this.src='https://placehold.co/40x40/0f172a/ffffff?text=->';">
                 </div>
-                <h3 class="text-base font-bold text-white group-hover:text-cyan-300">Team Makers</h3>
+                <h3 class="text-base font-bold text-white group-hover:text-cyan-300">فريق العمل (Team Makers)</h3>
             </a>
 
             <a href="index 4.html" class="glass-card squircle p-5 text-center block hover:bg-white/15 transition group">
-
                 <div class="flex items-center justify-center gap-2 my-1">
                     <img src="nx.png" alt="Next" class="w-10 h-10 object-contain group-hover:scale-110 transition" onerror="this.onerror=null; this.src='https://placehold.co/40x40/0f172a/ffffff?text=->';">
                 </div>
-                <h3 class="text-base font-bold text-white group-hover:text-emerald-300">Sign In Screen</h3>
+                <h3 class="text-base font-bold text-white group-hover:text-emerald-300">شاشة تسجيل الدخول</h3>
             </a>
 
             <a href="test.html" class="glass-card squircle p-5 text-center block hover:bg-white/15 transition group">
-  
                 <div class="flex items-center justify-center gap-2 my-1">
                     <img src="nx.png" alt="Next" class="w-10 h-10 object-contain group-hover:scale-110 transition" onerror="this.onerror=null; this.src='https://placehold.co/40x40/0f172a/ffffff?text=->';">
                 </div>
-                <h3 class="text-base font-bold text-white group-hover:text-amber-300">Old Version 1.4.19</h3>
+                <h3 class="text-base font-bold text-white group-hover:text-amber-300">الإصدار القديم 1.4.19</h3>
             </a>
-
         </section>
 
     </main>
 
- <!-- Recent Apps Drawer Modal -->
+    <!-- Recent Apps Drawer Modal -->
     <div id="recent-apps-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex-col justify-end p-4 hidden">
         <div class="glass-dark rounded-3xl p-6 max-w-2xl mx-auto w-full space-y-4 border border-white/20">
             <div class="flex justify-between items-center border-b border-white/10 pb-3">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-layer-group text-cyan-400"></i>
-                    <h3 class="font-bold text-lg text-white">Recent Applications</h3>
+                    <h3 class="font-bold text-lg text-white">التطبيقات الأخيرة</h3>
                 </div>
                 <button onclick="toggleRecentApps()" class="text-white/70 hover:text-white text-xl">
                     <i class="fa-solid fa-xmark"></i>
@@ -352,16 +464,14 @@
 
             <div class="text-center pt-2">
                 <button onclick="clearRecentApps()" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 px-5 py-2 rounded-xl text-xs font-bold transition">
-                    Clear All Recent
+                    مسح التطبيقات الأخيرة
                 </button>
             </div>
         </div>
     </div>
 
-
     <!-- Android Taskbar / Dock Bar -->
     <footer class="fixed bottom-0 inset-x-0 h-16 glass-dark border-t border-white/10 z-50 px-6 flex items-center justify-between">
-        
         <!-- Dock Shortcuts (Left) -->
         <div class="flex items-center gap-3">
             <a href="https://chatgpt.com/" target="_blank" class="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center text-white text-lg hover:scale-110 transition shadow">
@@ -378,20 +488,21 @@
         <!-- Android Nav Bar Controls (Center) -->
         <div class="flex items-center gap-8 text-white/80">
             <!-- Triangle Button: Go Back -->
-            <button onclick="window.history.back()" class="hover:text-cyan-400 p-2 active:scale-90 transition" title="Back">
-                <i class="fa-solid fa-chevron-left text-lg"></i>
+            <button onclick="window.history.back()" class="hover:text-cyan-400 p-2 active:scale-90 transition" title="رجوع">
+                <i class="fa-solid fa-chevron-right text-lg"></i>
             </button>
      
-            <!-- Circle Button: Home Screen / Refresh Scroll -->
-            <button onclick="goHome()" class="w-10 h-10 hover:bg-white/20 flex items-center justify-center rounded-full active:scale-90 transition shadow" title="Home">
+            <!-- Circle Button: Home Screen -->
+            <button onclick="goHome()" class="w-10 h-10 hover:bg-white/20 flex items-center justify-center rounded-full active:scale-90 transition shadow" title="الرئيسية">
                 <div class="w-4 h-4 rounded-full border-2 border-white"></div>
             </button>
         
             <!-- Square Button: Recent Apps Drawer -->
-            <button onclick="toggleRecentApps()" class="hover:text-cyan-400 p-2 active:scale-90 transition" title="Recent Apps">
+            <button onclick="toggleRecentApps()" class="hover:text-cyan-400 p-2 active:scale-90 transition" title="التطبيقات الأخيرة">
                 <i class="fa-regular fa-square text-lg"></i>
             </button>
         </div>
+
         <!-- System Version Label (Right) -->
         <div class="hidden sm:flex items-center gap-2 text-xs font-bold text-cyan-300">
             <span>AGAMY TAB OS</span>
@@ -399,7 +510,7 @@
     </footer>
 
     <script>
-        // Applications Master Data with Local Image Paths
+        // Applications Master Data[cite: 1]
         const appList = [
             { name: "Facebook", img: "face.jpeg", url: "https://www.facebook.com/?locale=ar_AR", fallbackIcon: "fa-brands fa-facebook", color: "text-blue-400" },
             { name: "YouTube", img: "you.png", url: "https://www.youtube.com/", fallbackIcon: "fa-brands fa-youtube", color: "text-red-500" },
@@ -453,7 +564,7 @@
             { name: "Kora Live", img: "yala.jpg", url: "https://dramalive.net/", fallbackIcon: "fa-solid fa-futbol", color: "text-emerald-400" }
         ];
 
-        // Teachers Data
+        // Teachers Data[cite: 1]
         const teacherList = [
             { name: "Ahmed Elabd", img: "abd.jpg", url: "https://eng-ahmed-elabd.com/", color: "text-pink-400" },
             { name: "Fathy Elzayat", img: "zayat.jpg", url: "https://dr-fathy-elzayat.com/", color: "text-amber-400" },
@@ -465,20 +576,15 @@
             { name: "Abd Elgawad", img: "abde.jpg", url: "https://magacademy.co/teachers/2", color: "text-purple-400" }
         ];
 
-         let recentApps = JSON.parse(localStorage.getItem('agamy_recent_apps') || '[]');
-
-        function trackAppLaunch(name, img, url) {
-            recentApps = recentApps.filter(app => app.name !== name);
-            recentApps.unshift({ name, img, url, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-            if (recentApps.length > 6) recentApps.pop();
-            localStorage.setItem('agamy_recent_apps', JSON.stringify(recentApps));
-        }
+        let recentApps = JSON.parse(localStorage.getItem('agamy_recent_apps') || '[]');
+        let appFolders = JSON.parse(localStorage.getItem('agamy_app_folders') || '[]');
+        let systemSettings = JSON.parse(localStorage.getItem('agamy_sys_settings') || '{"wifi":true, "bt":true, "sound":true, "plane":false, "dnd":false, "brightness":100}');
 
         // Render Apps Grid
         function renderApps() {
             const container = document.getElementById('apps-container');
             container.innerHTML = appList.map(app => `
-                <a href="${app.url}" target="_blank" class="app-item glass-card squircle p-3 flex flex-col items-center justify-center text-center group cursor-pointer decoration-none">
+                <a href="${app.url}" target="_blank" onclick="trackAppLaunch('${app.name}', '${app.img}', '${app.url}')" class="app-item glass-card squircle p-3 flex flex-col items-center justify-center text-center group cursor-pointer decoration-none">
                     <div class="w-14 h-14 sm:w-16 sm:h-16 squircle-icon bg-slate-900/60 border border-white/10 flex items-center justify-center overflow-hidden mb-2 shadow-md relative">
                         <img src="${app.img}" alt="${app.name}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="hidden w-full h-full items-center justify-center text-2xl ${app.color}">
@@ -507,10 +613,186 @@
             `).join('');
         }
 
-        // Theme Switcher
+        // Render App Folders
+        function renderFolders() {
+            const section = document.getElementById('folders-section');
+            if (appFolders.length === 0) {
+                section.innerHTML = '';
+                return;
+            }
+
+            section.innerHTML = `
+                <div class="flex items-center gap-2 mb-2 px-1">
+                    <i class="fa-solid fa-folder-open text-amber-400 text-lg"></i>
+                    <h2 class="text-xl font-bold tracking-wide">مجلدات التطبيقات</h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    ${appFolders.map((folder, fIndex) => `
+                        <div class="glass-card squircle p-4 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-sm text-amber-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-folder"></i> ${folder.name}
+                                </h3>
+                                <button onclick="deleteFolder(${fIndex})" class="text-red-400 hover:text-red-300 text-xs"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2">
+                                ${folder.apps.map(appName => {
+                                    const app = appList.find(a => a.name === appName);
+                                    if (!app) return '';
+                                    return `
+                                        <a href="${app.url}" target="_blank" onclick="trackAppLaunch('${app.name}', '${app.img}', '${app.url}')" class="p-2 glass-card rounded-xl flex flex-col items-center text-center group">
+                                            <img src="${app.img}" class="w-8 h-8 rounded-lg object-cover mb-1" onerror="this.src='https://placehold.co/32x32/0f172a/ffffff?text=APP';">
+                                            <span class="text-[9px] truncate w-full">${app.name}</span>
+                                        </a>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Control Center & Settings Logic
+        function toggleControlCenter() {
+            const modal = document.getElementById('control-center-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        function openSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            renderFoldersManagement();
+            const ccModal = document.getElementById('control-center-modal');
+            if(!ccModal.classList.contains('hidden')) toggleControlCenter();
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function toggleSetting(type) {
+            systemSettings[type] = !systemSettings[type];
+            localStorage.setItem('agamy_sys_settings', JSON.stringify(systemSettings));
+            updateSystemUI();
+        }
+
+        function updateSystemUI() {
+            document.getElementById('ico-wifi').classList.toggle('opacity-30', !systemSettings.wifi);
+            document.getElementById('ico-bt').classList.toggle('opacity-30', !systemSettings.bt);
+            document.getElementById('ico-dnd').classList.toggle('hidden', !systemSettings.dnd);
+            document.getElementById('ico-plane').classList.toggle('hidden', !systemSettings.plane);
+            
+            const soundIcon = document.getElementById('sound-icon');
+            soundIcon.className = systemSettings.sound ? "fa-solid fa-volume-high text-lg" : "fa-solid fa-volume-xmark text-lg";
+
+            // Update Toggles style in control center
+            ['wifi', 'bt', 'sound', 'plane', 'dnd'].forEach(t => {
+                const btn = document.getElementById(`btn-${t}`);
+                if (btn) {
+                    if (systemSettings[t]) {
+                        btn.className = "p-3 rounded-2xl glass-card flex flex-col items-center justify-center gap-2 text-xs font-bold transition bg-cyan-500/20 text-cyan-300 border-cyan-400/40";
+                    } else {
+                        btn.className = "p-3 rounded-2xl glass-card flex flex-col items-center justify-center gap-2 text-xs font-bold transition bg-white/5 text-white/50";
+                    }
+                }
+            });
+        }
+
+        function changeBrightness(val) {
+            document.getElementById('brightness-val').innerText = `${val}%`;
+            const opacity = (100 - val) / 110; // Dark overlay adjustment
+            document.getElementById('brightness-overlay').style.background = `rgba(0,0,0,${opacity})`;
+        }
+
+        function clearNotifications() {
+            document.getElementById('notifications-list').innerHTML = `<p class="text-xs text-white/50 text-center py-2">لا توجد إشعارات جديدة</p>`;
+        }
+
+        // Theme Switcher & Wallpaper Upload
         function setTheme(themeClass) {
             const body = document.getElementById('os-body');
+            body.style.backgroundImage = '';
             body.className = `min-h-screen flex flex-col transition-all duration-500 ${themeClass}`;
+            localStorage.setItem('agamy_wallpaper', themeClass);
+            localStorage.removeItem('agamy_custom_wallpaper');
+        }
+
+        function uploadCustomWallpaper(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageUrl = e.target.result;
+                    const body = document.getElementById('os-body');
+                    body.className = `min-h-screen flex flex-col transition-all duration-500`;
+                    body.style.backgroundImage = `url('${imageUrl}')`;
+                    body.style.backgroundSize = 'cover';
+                    body.style.backgroundPosition = 'center';
+                    localStorage.setItem('agamy_custom_wallpaper', imageUrl);
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // App Folders Management Functions
+        function createNewFolder() {
+            const nameInput = document.getElementById('new-folder-name');
+            const name = nameInput.value.trim();
+            if (!name) return;
+
+            appFolders.push({ name, apps: [appList[0].name, appList[1].name] }); // Default initial apps in new folder
+            nameInput.value = '';
+            localStorage.setItem('agamy_app_folders', JSON.stringify(appFolders));
+            renderFolders();
+            renderFoldersManagement();
+        }
+
+        function deleteFolder(index) {
+            appFolders.splice(index, 1);
+            localStorage.setItem('agamy_app_folders', JSON.stringify(appFolders));
+            renderFolders();
+            renderFoldersManagement();
+        }
+
+        function renderFoldersManagement() {
+            const container = document.getElementById('folders-management-list');
+            if (appFolders.length === 0) {
+                container.innerHTML = `<p class="text-xs text-white/50">لم تقم بإنشاء أي مجلدات بعد.</p>`;
+                return;
+            }
+
+            container.innerHTML = appFolders.map((folder, fIndex) => `
+                <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-cyan-300">📁 ${folder.name}</span>
+                        <button onclick="deleteFolder(${fIndex})" class="text-red-400 hover:underline">حذف المجلد</button>
+                    </div>
+                    <div class="flex flex-wrap gap-1">
+                        ${appList.map(app => `
+                            <button onclick="toggleAppInFolder(${fIndex}, '${app.name}')" class="text-[10px] px-2 py-1 rounded-lg border ${folder.apps.includes(app.name) ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-400' : 'bg-white/5 text-white/70 border-white/10'}">
+                                ${app.name}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleAppInFolder(fIndex, appName) {
+            const folder = appFolders[fIndex];
+            if (folder.apps.includes(appName)) {
+                folder.apps = folder.apps.filter(a => a !== appName);
+            } else {
+                folder.apps.push(appName);
+            }
+            localStorage.setItem('agamy_app_folders', JSON.stringify(appFolders));
+            renderFolders();
+            renderFoldersManagement();
         }
 
         // Clock Update Function
@@ -518,26 +800,21 @@
             const now = new Date();
             let hours = now.getHours();
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const ampm = hours >= 12 ? 'م' : 'ص';
             hours = hours % 12 || 12;
 
             const timeStr = `${hours}:${minutes} ${ampm}`;
             document.getElementById('status-time').innerText = timeStr;
             document.getElementById('widget-time-full').innerText = timeStr;
 
-            const optionsStatus = { weekday: 'short', month: 'short', day: 'numeric' };
-            document.getElementById('status-date').innerText = now.toLocaleDateString('en-US', optionsStatus);
-
-            const optionsWidget = { weekday: 'long', month: 'long', day: 'numeric' };
-            document.getElementById('widget-date-full').innerText = now.toLocaleDateString('en-US', optionsWidget).toUpperCase();
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('ar-EG', options);
+            document.getElementById('status-date').innerText = dateStr;
+            document.getElementById('widget-date-full').innerText = dateStr;
         }
 
-         function goHome() {
+        function goHome() {
             window.scrollTo({top: 0, behavior: 'smooth'});
-            const modal = document.getElementById('recent-apps-modal');
-            if (!modal.classList.contains('hidden')) {
-                toggleRecentApps();
-            }
         }
 
         function toggleRecentApps() {
@@ -546,14 +823,14 @@
             
             if (modal.classList.contains('hidden')) {
                 if (recentApps.length === 0) {
-                    list.innerHTML = `<p class="text-sm text-white/60 text-center w-full py-4">No recent apps running in background</p>`;
+                    list.innerHTML = `<p class="text-sm text-white/65 text-center w-full py-4">لا توجد تطبيقات نشطة مؤخراً</p>`;
                 } else {
                     list.innerHTML = recentApps.map(app => `
                         <div class="flex-shrink-0 w-28 glass-card rounded-2xl p-3 flex flex-col items-center text-center relative group">
                             <img src="${app.img}" class="w-12 h-12 rounded-xl object-cover mb-2" onerror="this.src='https://placehold.co/48x48/0f172a/ffffff?text=APP';">
                             <span class="text-xs font-bold text-white truncate w-full">${app.name}</span>
                             <span class="text-[10px] text-cyan-300 mt-1">${app.time}</span>
-                            <a href="${app.url}" target="_blank" class="mt-2 text-[10px] bg-cyan-500 text-slate-950 font-bold px-2 py-1 rounded-lg w-full block">Open</a>
+                            <a href="${app.url}" target="_blank" class="mt-2 text-[10px] bg-cyan-500 text-slate-950 font-bold px-2 py-1 rounded-lg w-full block">فتح</a>
                         </div>
                     `).join('');
                 }
@@ -565,36 +842,42 @@
             }
         }
 
+        function trackAppLaunch(name, img, url) {
+            recentApps = recentApps.filter(app => app.name !== name);
+            recentApps.unshift({ name, img, url, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+            if (recentApps.length > 6) recentApps.pop();
+            localStorage.setItem('agamy_recent_apps', JSON.stringify(recentApps));
+        }
+
         function clearRecentApps() {
             recentApps = [];
             localStorage.removeItem('agamy_recent_apps');
             toggleRecentApps();
         }
 
-   // Intersection Observer for Smooth Scroll Reveal Animations
-        function initScrollReveal() {
-            const reveals = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            reveals.forEach(el => observer.observe(el));
-        }
-
         // Initialize Page
         window.onload = function() {
             renderApps();
             renderTeachers();
+            renderFolders();
             updateClock();
             setInterval(updateClock, 1000);
+            updateSystemUI();
+
+            // Load saved theme or custom wallpaper
+            const savedWallpaper = localStorage.getItem('agamy_wallpaper');
+            const savedCustom = localStorage.getItem('agamy_custom_wallpaper');
+            if (savedCustom) {
+                const body = document.getElementById('os-body');
+                body.className = `min-h-screen flex flex-col transition-all duration-500`;
+                body.style.backgroundImage = `url('${savedCustom}')`;
+                body.style.backgroundSize = 'cover';
+                body.style.backgroundPosition = 'center';
+            } else if (savedWallpaper) {
+                setTheme(savedWallpaper);
+            }
         };
 
-
-                // Service Worker Registration
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", () => {
                 navigator.serviceWorker.register("service-worker.js").catch(() => {});
