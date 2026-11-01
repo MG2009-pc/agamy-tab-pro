@@ -510,6 +510,7 @@
     </footer>
 
     <script>
+        window.alert("مرحباً بك في AGAMY TAB OS! \n\n لا تنسي الصلاه علي النبي محمد (صلي الله عليه وسلم)\n\n يمكنك تثبيت Agamy Tab كتطبيق علي جهازك عن طريق الضغط علي الثلاث نقاط اعلي المتصفح ثم الضغط علي تثبيت الموقع ك تطبيق");
         // Applications Master Data[cite: 1]
         const appList = [
             { name: "AgamyDroid", img: "dd.jpg", url: "https://mg2009-pc.github.io/agamydroid/", fallbackIcon: "fa-brands fa-facebook", color: "text-blue-400" },
@@ -522,10 +523,16 @@
             { name: "Messenger", img: "Messenger-3-2.png", url: "https://www.messenger.com/", fallbackIcon: "fa-brands fa-facebook-messenger", color: "text-blue-500" },
             { name: "Zoom", img: "zoom.jpeg", url: "https://www.zoom.com/", fallbackIcon: "fa-solid fa-video", color: "text-cyan-400" },
             { name: "GTA V", img: "gta 5.jpg" , url: "https://gta.deloskiyt.pl/", fallbackIcon: "fa-solid fa-car", color: "text-pink-400" },
+            { name: "GTA V Mobile", img: "gta v m.jpg" , url: "https://v2.fiveplay.lol/game.html?utm_source=chatgpt.com&mode=sandbox&cfg=1_3-american", fallbackIcon: "fa-solid fa-car", color: "text-pink-400" },
             { name: "GTA VC", img: "gta 7.jpg" , url: "https://quenq.com/apps/vice-city/", fallbackIcon: "fa-solid fa-car", color: "text-pink-400" },
             { name: "GTA III", img: "gta 3.jpg", url: "https://quenq.com/apps/iii-online/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
+            { name: "GTA CTW", img: "ch.jpg", url: "https://gta-chinatown-wars.pages.dev/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
+            { name: "Pes 2012", img: "pes.jpg", url: "https://pes12.online/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
+            { name: "F1 2006", img: "F1_06.jpg", url: "https://f12006.online/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
             { name: "Al Daeary", img: "fff.png", url: "https://dayeri.com/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
-            { name: "MINCRAFT", img: "minc.jpg", url: "https://quenq.com/apps/minecraft/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
+            { name: "CyperPunk", img: "cy.jpg", url: "https://cyberpunk2077.lol/game?ioShared=1&ioSharedMB=128&ioInflight=4&ioPersist=1&ioPersistMB=6144&binkRecycle=1&psoWarm=0&skipIntro=1&ioLookahead=16&behindLoad=0&floodKeep=1 ", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
+            { name: "Minecraft", img: "minc.jpg", url: "https://quenq.com/apps/minecraft/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
+            { name: "Minecraft ", img: "min.jpg", url: "https://wasmarcade.com/minecraft", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
             { name: "Call Of Duty", img: "call.jpg", url: "https://vel.gg/bo1z", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
             { name: "Counter Strike", img: "coun.jpg", url: "https://www.inxanitylabs.com/games/counter-strike", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
             { name: "Pc Web Games", img: "liter.png", url: "https://www.inxanitylabs.com/games", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
@@ -534,7 +541,6 @@
             { name: "GAMES", img: "تنزيل.png", url: "https://poki.com/ar", fallbackIcon: "fa-solid fa-gamepad", color: "text-purple-400" },
             { name: "Android", img: "an.jfif", url: "https://www.myandroid.org/run/start.php", fallbackIcon: "fa-brands fa-android", color: "text-green-500" },
             { name: "Apple", img: "apple.png", url: "https://appetize.io/app/standalone_qr7jnxgnu7zotda4rjtsggv3re?device=iphone14pro&osVersion=16.2&toolbar=true", fallbackIcon: "fa-brands fa-apple", color: "text-white" },
-            { name: "1V1 lol", img: "1v.jfif", url: "https://1v1.lol/", fallbackIcon: "fa-solid fa-crosshairs", color: "text-amber-500" },
             { name: "Photopea", img: "pp.png", url: "https://www.photopea.com/", fallbackIcon: "fa-solid fa-image", color: "text-teal-400" },
             { name: "Meta AI", img: "m.jpg", url: "https://www.meta.ai/?__pwa=1", fallbackIcon: "fa-solid fa-brain", color: "text-purple-400" },
             { name: "Maps", img: "gg.jpg", url: "https://maps.google.com/maps", fallbackIcon: "fa-solid fa-map-location-dot", color: "text-yellow-400" },
@@ -549,31 +555,34 @@
             { name: "Car Map", img: "c.jpg", url: "https://framesynthesis.com/drivingsimulator/maps/#google_vignette", fallbackIcon: "fa-solid fa-route", color: "text-slate-300" },
             { name: "Slowroads", img: "sl.jpg", url: "https://slowroads.io/", fallbackIcon: "fa-solid fa-road", color: "text-green-400" },
             { name: "Ludo", img: "lu.jpg", url: "https://ludoking.com/play/", fallbackIcon: "fa-solid fa-border-all", color: "text-yellow-400" },
-            { name: "Chess", img: "ch.jpg", url: "https://www.chess.com/", fallbackIcon: "fa-solid fa-chess", color: "text-emerald-500" },
+            { name: "Chess", img: "chess.jpg", url: "https://www.chess.com/", fallbackIcon: "fa-solid fa-chess", color: "text-emerald-500" },
             { name: "Paco Way", img: "poco.png", url: "https://pakohighway.online/", fallbackIcon: "fa-solid fa-flag-checkered", color: "text-red-500" },
             { name: "Cars Drive", img: "pod.png", url: "https://bruno-simon.com/", fallbackIcon: "fa-solid fa-gauge-high", color: "text-orange-500" },
             { name: "Townscaper", img: "scra.jfif", url: "https://www.townscapergame.com/", fallbackIcon: "fa-solid fa-building", color: "text-cyan-400" },
             { name: "Windows 95", img: "wi.jpg", url: "https://www.windows93.net/", fallbackIcon: "fa-brands fa-windows", color: "text-teal-400" },
-            { name: "VS Code", img: "", url: "https://vscode.dev/", fallbackIcon: "fa-solid fa-code", color: "text-blue-400" },
+            { name: "VS Code", img: "vs.jpg", url: "https://vscode.dev/", fallbackIcon: "fa-solid fa-code", color: "text-blue-400" },
             { name: "Windows 7", img: "7.jpg", url: "https://win7simu.visnalize.com/", fallbackIcon: "fa-brands fa-windows", color: "text-sky-400" },
-            { name: "Windows 10", img: "", url: "https://win10.webjeet.me/#", fallbackIcon: "fa-brands fa-windows", color: "text-blue-500" },
+            { name: "Windows 10", img: "10.png", url: "https://win10.webjeet.me/#", fallbackIcon: "fa-brands fa-windows", color: "text-blue-500" },
             { name: "Windows 11", img: "11.png", url: "https://win11.blueedge.me/", fallbackIcon: "fa-brands fa-windows", color: "text-cyan-300" },
-            { name: "Whiteboard", img: "", url: "https://www.tutorialspoint.com/whiteboard.htm", fallbackIcon: "fa-solid fa-pen-to-square", color: "text-blue-400" },
+            { name: "Whiteboard", img: "boa.png", url: "https://www.tutorialspoint.com/whiteboard.htm", fallbackIcon: "fa-solid fa-pen-to-square", color: "text-blue-400" },
             { name: "WE Cima", img: "WE.jpeg", url: "https://wecima.watch/", fallbackIcon: "fa-solid fa-film", color: "text-indigo-400" },
             { name: "ArabSeed", img: "ar.jpeg", url: "https://m.arabseed.show/", fallbackIcon: "fa-solid fa-video", color: "text-rose-500" },
             { name: "Bein Live", img: "Bein.png", url: "https://live.aflam4you.net/browse-watch-koora_live-tv-live-videos-1-date.html", fallbackIcon: "fa-solid fa-tv", color: "text-purple-400" },
-            { name: "Kora Live", img: "yala.jpg", url: "https://dramalive.net/", fallbackIcon: "fa-solid fa-futbol", color: "text-emerald-400" }
+            { name: "Bein Sport", img: "bee.jpg", url: "https://44.koralife8.com/2026/06/be-in-sport-1.html", fallbackIcon: "fa-solid fa-futbol", color: "text-emerald-400" },
+
         ];
 
         // Teachers Data[cite: 1]
         const teacherList = [
             { name: "Ahmed Elabd", img: "abd.jpg", url: "https://eng-ahmed-elabd.com/", color: "text-pink-400" },
+            { name: "Adham Samier", img: "adhm.jpg", url: "https://eng-adham-samir.com/", color: "text-pink-400" },
             { name: "Fathy Elzayat", img: "zayat.jpg", url: "https://dr-fathy-elzayat.com/", color: "text-amber-400" },
             { name: "Khaled Sakr", img: "sakr.jpg", url: "https://khaled-sakr.com/", color: "text-red-500" },
             { name: "Mohamed Agamy", img: "mohamed.png", url: "https://mg2009-pc.github.io/mohamed-agamy-dev/", color: "text-cyan-400", label: "Web Owner" },
             { name: "Mohamed Salah", img: "salah.jpg", url: "https://bassthalk.com/teacher/3", color: "text-emerald-400" },
             { name: "Mohamed Elhadad", img: "hadad.PNG", url: "https://www.mr-elhadad.com/", color: "text-yellow-400" },
             { name: "Mostafa Elaskary", img: "askery.jpg", url: "https://dr-mostafa-elaskary.com/", color: "text-purple-400" },
+            { name: "The President", img: "pre.png", url: "https://thepresedent.com/", color: "text-purple-400" },
             { name: "Abd Elgawad", img: "abde.jpg", url: "https://magacademy.co/teachers/2", color: "text-purple-400" }
         ];
 
