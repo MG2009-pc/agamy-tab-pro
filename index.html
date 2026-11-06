@@ -145,6 +145,38 @@
         </div>
     </header>
 
+    <!-- Custom System Welcome Modal -->
+    <div id="welcome-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden items-center justify-center p-4 animate-in fade-in duration-300">
+        <div class="glass-dark squircle p-6 sm:p-8 max-w-lg w-full text-center space-y-5 border border-white/20 shadow-2xl relative overflow-hidden">
+            
+            <!-- Welcome Header & Icon -->
+            <div class="flex flex-col items-center gap-2">
+                <div class="w-16 h-16 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300 text-3xl shadow-lg">
+                    <i class="fa-solid fa-bell"></i>
+                </div>
+                <h2 class="text-2xl font-black text-white tracking-wide mt-2">مرحباً بك في AGAMY TAB OS</h2>
+            </div>
+
+            <!-- Custom Image Container inside Message -->
+            <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-md max-h-48 bg-slate-900/50 flex items-center justify-center">
+                <img id="modal-welcome-img" src="sally.png" alt="Welcome Image" width="200px" onerror="this.onerror=null; this.src='https://placehold.co/400x200/0f172a/00f2fe?text=AGAMY+TAB+OS';">
+            </div>
+
+            <!-- Text Content -->
+            <div class="space-y-3 text-sm leading-relaxed text-white/90 font-medium bg-white/5 p-4 rounded-2xl border border-white/10">
+                <h2 style="font-size: 18px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"> لا تنسى الصلاة على النبي محمد (صلى الله عليه وسلم) </h2>
+                <h3 style=" color: #ffb350; font-size: 15px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                  يمكنك تثبيت عجمي تاب كتطبيق عن طريق الضغط علي الثلاث نقاط اعلي المتصفح ثم الضغط علي تثبيت ك تطبيق
+                </h3>
+            </div>
+
+            <!-- Action Button -->
+            <button onclick="closeWelcomeModal()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black py-3 rounded-2xl text-sm transition shadow-lg active:scale-95">
+               <h3> عليه الصلاه والسلام / دخول النظام</h3>
+            </button>
+        </div>
+    </div>
+
     <!-- Android Control Center & Notifications Panel (Modal) -->
     <div id="control-center-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 hidden items-start justify-center pt-12 px-4">
         <div class="glass-dark rounded-3xl p-6 max-w-md w-full space-y-6 border border-white/20 shadow-2xl animate-in fade-in zoom-in duration-200">
@@ -510,8 +542,7 @@
     </footer>
 
     <script>
-        window.alert("مرحباً بك في AGAMY TAB OS! \n\n لا تنسي الصلاه علي النبي محمد (صلي الله عليه وسلم)\n\n يمكنك تثبيت Agamy Tab كتطبيق علي جهازك عن طريق الضغط علي الثلاث نقاط اعلي المتصفح ثم الضغط علي تثبيت الموقع ك تطبيق");
-        // Applications Master Data[cite: 1]
+        // Applications Master Data
         const appList = [
             { name: "AgamyDroid", img: "dd.jpg", url: "https://mg2009-pc.github.io/agamydroid/", fallbackIcon: "fa-brands fa-facebook", color: "text-blue-400" },
             { name: "Facebook", img: "face.jpeg", url: "https://www.facebook.com/?locale=ar_AR", fallbackIcon: "fa-brands fa-facebook", color: "text-blue-400" },
@@ -529,6 +560,7 @@
             { name: "GTA CTW", img: "ch.jpg", url: "https://gta-chinatown-wars.pages.dev/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
             { name: "Pes 2012", img: "pes.jpg", url: "https://pes12.online/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
             { name: "F1 2006", img: "F1_06.jpg", url: "https://f12006.online/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
+            { name: "Sharaby Computers", img: "sh.jpg", url: "https://www.facebook.com/share/1DUMVDNTFh/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
             { name: "Al Daeary", img: "fff.png", url: "https://dayeri.com/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
             { name: "CyperPunk", img: "cy.jpg", url: "https://cyberpunk2077.lol/game?ioShared=1&ioSharedMB=128&ioInflight=4&ioPersist=1&ioPersistMB=6144&binkRecycle=1&psoWarm=0&skipIntro=1&ioLookahead=16&behindLoad=0&floodKeep=1 ", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
             { name: "Minecraft", img: "minc.jpg", url: "https://quenq.com/apps/minecraft/", fallbackIcon: "fa-solid fa-city", color: "text-slate-300" },
@@ -572,7 +604,7 @@
 
         ];
 
-        // Teachers Data[cite: 1]
+        // Teachers Data
         const teacherList = [
             { name: "Ahmed Elabd", img: "abd.jpg", url: "https://eng-ahmed-elabd.com/", color: "text-pink-400" },
             { name: "Adham Samier", img: "adhm.jpg", url: "https://eng-adham-samir.com/", color: "text-pink-400" },
@@ -589,6 +621,15 @@
         let recentApps = JSON.parse(localStorage.getItem('agamy_recent_apps') || '[]');
         let appFolders = JSON.parse(localStorage.getItem('agamy_app_folders') || '[]');
         let systemSettings = JSON.parse(localStorage.getItem('agamy_sys_settings') || '{"wifi":true, "bt":true, "sound":true, "plane":false, "dnd":false, "brightness":100}');
+
+        // Welcome Modal Handlers
+        function closeWelcomeModal() {
+            const modal = document.getElementById('welcome-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
 
         // Render Apps Grid
         function renderApps() {
@@ -867,6 +908,13 @@
 
         // Initialize Page
         window.onload = function() {
+            // Show welcome modal automatically on load
+            const welcomeModal = document.getElementById('welcome-modal');
+            if (welcomeModal) {
+                welcomeModal.classList.remove('hidden');
+                welcomeModal.classList.add('flex');
+            }
+
             renderApps();
             renderTeachers();
             renderFolders();
