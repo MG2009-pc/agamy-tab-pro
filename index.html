@@ -284,6 +284,49 @@
         </div>
     </div>
 
+
+    <!-- Add Website as an App Modal -->
+    <div id="add-site-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[110] hidden items-center justify-center p-4">
+        <div class="glass-dark rounded-3xl p-6 max-w-md w-full space-y-4 border border-cyan-400/30 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                    <i class="fa-solid fa-globe text-cyan-400"></i> إضافة موقع إلى التطبيقات
+                </h3>
+                <button type="button" onclick="closeAddSiteModal()" class="text-white/70 hover:text-white text-xl p-1" aria-label="إغلاق">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="add-site-form" class="space-y-4" onsubmit="saveCustomSite(event)">
+                <div>
+                    <label for="custom-site-url" class="block text-xs font-bold text-white/80 mb-2">رابط الموقع</label>
+                    <input id="custom-site-url" type="url" required placeholder="https://example.com" dir="ltr"
+                        class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-3 text-sm text-white placeholder-white/40 outline-none focus:border-cyan-400">
+                </div>
+                <div>
+                    <label for="custom-site-image" class="block text-xs font-bold text-white/80 mb-2">صورة الموقع من جهازك</label>
+                    <input id="custom-site-image" type="file" accept="image/*" required
+                        class="w-full text-xs text-white/70 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cyan-500 file:text-slate-950 cursor-pointer">
+                    <div id="custom-site-preview-wrap" class="hidden mt-3 justify-center">
+                        <img id="custom-site-preview" alt="معاينة أيقونة الموقع" class="w-20 h-20 rounded-2xl object-cover border border-white/20 shadow-lg">
+                    </div>
+                    <p class="text-[10px] text-white/45 mt-1">سيتم تصغير الصورة تلقائياً لتناسب أيقونة التطبيق.</p>
+                </div>
+                <div>
+                    <label for="custom-site-name" class="block text-xs font-bold text-white/80 mb-2">اسم الموقع</label>
+                    <input id="custom-site-name" type="text" required maxlength="40" placeholder="مثال: موقعي المفضل"
+                        class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-3 text-sm text-white placeholder-white/40 outline-none focus:border-cyan-400">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeAddSiteModal()" class="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl text-sm transition">إلغاء</button>
+                    <button id="save-custom-site-btn" type="submit" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-black py-3 rounded-xl text-sm transition">
+                        <i class="fa-solid fa-floppy-disk ml-1"></i> حفظ الموقع
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Main Content Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6 pb-24">
 
@@ -396,7 +439,12 @@
                     <i class="fa-solid fa-grid-2 text-cyan-400 text-lg"></i>
                     <h2 class="text-xl font-bold tracking-wide">قائمة التطبيقات</h2>
                 </div>
-                <span class="text-xs bg-white/10 px-3 py-1 rounded-full text-white/70">اضغط لفتح التطبيق</span>
+                <div class="flex items-center gap-2">
+                    <span class="hidden sm:inline text-xs bg-white/10 px-3 py-1 rounded-full text-white/70">اضغط لفتح التطبيق</span>
+                    <button onclick="openAddSiteModal()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black px-3 py-2 rounded-xl text-xs transition shadow flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> إضافة موقع
+                    </button>
+                </div>
             </div>
 
             <div id="apps-container" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
@@ -604,6 +652,20 @@
 
         ];
 
+        // User-added websites (persisted locally on this device/browser)
+        let customApps = [];
+        try {
+            customApps = JSON.parse(localStorage.getItem('agamy_custom_apps') || '[]');
+            if (!Array.isArray(customApps)) customApps = [];
+        } catch (error) {
+            customApps = [];
+        }
+        customApps.forEach(app => {
+            if (app && app.name && app.url && app.img && !appList.some(existing => existing.url === app.url)) {
+                appList.push({ ...app, custom: true, fallbackIcon: "fa-solid fa-globe", color: "text-cyan-300" });
+            }
+        });
+
         // Teachers Data
         const teacherList = [
             { name: "Ahmed Elabd", img: "abd.jpg", url: "https://eng-ahmed-elabd.com/", color: "text-pink-400" },
@@ -631,20 +693,179 @@
             }
         }
 
+
+        // Add Website Modal
+        function openAddSiteModal() {
+            const modal = document.getElementById('add-site-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAddSiteModal() {
+            const modal = document.getElementById('add-site-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function escapeAppText(value) {
+            return String(value).replace(/[&<>"']/g, char => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[char]);
+        }
+
+        // Show a preview of the selected icon.
+        document.addEventListener('DOMContentLoaded', () => {
+            const imageInput = document.getElementById('custom-site-image');
+            if (imageInput) {
+                imageInput.addEventListener('change', () => {
+                    const file = imageInput.files && imageInput.files[0];
+                    const wrap = document.getElementById('custom-site-preview-wrap');
+                    const preview = document.getElementById('custom-site-preview');
+                    if (!file) {
+                        wrap.classList.add('hidden');
+                        wrap.classList.remove('flex');
+                        return;
+                    }
+                    if (!file.type.startsWith('image/')) {
+                        alert('من فضلك اختر ملف صورة صالح.');
+                        imageInput.value = '';
+                        wrap.classList.add('hidden');
+                        wrap.classList.remove('flex');
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = event => {
+                        preview.src = event.target.result;
+                        wrap.classList.remove('hidden');
+                        wrap.classList.add('flex');
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
+        function resizeSiteIcon(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = () => reject(new Error('تعذر قراءة الصورة.'));
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('ملف الصورة غير صالح.'));
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const maxSize = 256;
+                        const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+                        canvas.width = Math.max(1, Math.round(img.width * scale));
+                        canvas.height = Math.max(1, Math.round(img.height * scale));
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.78));
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function saveCustomSite(event) {
+            event.preventDefault();
+            const urlInput = document.getElementById('custom-site-url');
+            const nameInput = document.getElementById('custom-site-name');
+            const imageInput = document.getElementById('custom-site-image');
+            const saveButton = document.getElementById('save-custom-site-btn');
+            const name = nameInput.value.trim();
+            const rawUrl = urlInput.value.trim();
+            const file = imageInput.files && imageInput.files[0];
+
+            if (!name || !rawUrl || !file) {
+                alert('من فضلك أكمل الرابط والصورة واسم الموقع.');
+                return;
+            }
+
+            let parsedUrl;
+            try {
+                parsedUrl = new URL(rawUrl);
+                if (!['http:', 'https:'].includes(parsedUrl.protocol)) throw new Error('Invalid protocol');
+            } catch (error) {
+                alert('من فضلك أدخل رابطاً صحيحاً يبدأ بـ https:// أو http://');
+                return;
+            }
+
+            saveButton.disabled = true;
+            saveButton.textContent = 'جارٍ الحفظ...';
+            try {
+                const imageData = await resizeSiteIcon(file);
+                const app = {
+                    name,
+                    url: parsedUrl.href,
+                    img: imageData,
+                    fallbackIcon: 'fa-solid fa-globe',
+                    color: 'text-cyan-300',
+                    custom: true
+                };
+
+                // Avoid duplicate website links.
+                customApps = customApps.filter(item => item.url !== app.url);
+                customApps.push(app);
+                try {
+                    localStorage.setItem('agamy_custom_apps', JSON.stringify(customApps));
+                } catch (storageError) {
+                    customApps.pop();
+                    alert('مساحة التخزين ممتلئة. جرّب صورة أصغر أو احذف بعض المواقع المضافة.');
+                    return;
+                }
+
+                const existingIndex = appList.findIndex(item => item.url === app.url);
+                if (existingIndex >= 0) appList[existingIndex] = app;
+                else appList.push(app);
+
+                renderApps();
+                renderFoldersManagement();
+                document.getElementById('add-site-form').reset();
+                document.getElementById('custom-site-preview-wrap').classList.add('hidden');
+                document.getElementById('custom-site-preview-wrap').classList.remove('flex');
+                closeAddSiteModal();
+            } catch (error) {
+                alert(error.message || 'حدث خطأ أثناء حفظ الموقع.');
+            } finally {
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk ml-1"></i> حفظ الموقع';
+            }
+        }
+
         // Render Apps Grid
         function renderApps() {
             const container = document.getElementById('apps-container');
-            container.innerHTML = appList.map(app => `
-                <a href="${app.url}" target="_blank" onclick="trackAppLaunch('${app.name}', '${app.img}', '${app.url}')" class="app-item glass-card squircle p-3 flex flex-col items-center justify-center text-center group cursor-pointer decoration-none">
-                    <div class="w-14 h-14 sm:w-16 sm:h-16 squircle-icon bg-slate-900/60 border border-white/10 flex items-center justify-center overflow-hidden mb-2 shadow-md relative">
-                        <img src="${app.img}" alt="${app.name}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="hidden w-full h-full items-center justify-center text-2xl ${app.color}">
-                            <i class="${app.fallbackIcon}"></i>
+            container.innerHTML = appList.map((app, index) => `
+                <div class="relative">
+                    <a href="${escapeAppText(app.url)}" target="_blank" rel="noopener noreferrer" onclick="trackAppLaunch('${escapeAppText(app.name)}', '${escapeAppText(app.img)}', '${escapeAppText(app.url)}')" class="app-item glass-card squircle p-3 flex flex-col items-center justify-center text-center group cursor-pointer decoration-none">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 squircle-icon bg-slate-900/60 border border-white/10 flex items-center justify-center overflow-hidden mb-2 shadow-md relative">
+                            <img src="${escapeAppText(app.img)}" alt="${escapeAppText(app.name)}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="hidden w-full h-full items-center justify-center text-2xl ${app.color || 'text-cyan-300'}">
+                                <i class="${app.fallbackIcon || 'fa-solid fa-globe'}"></i>
+                            </div>
                         </div>
-                    </div>
-                    <span class="text-xs font-medium text-white/90 truncate w-full group-hover:text-cyan-300 transition-colors">${app.name}</span>
-                </a>
+                        <span class="text-xs font-medium text-white/90 truncate w-full group-hover:text-cyan-300 transition-colors">${escapeAppText(app.name)}</span>
+                    </a>
+                    ${app.custom ? `<button type="button" onclick="deleteCustomSite(${index})" title="حذف الموقع" class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-red-500 text-white text-xs shadow-lg z-10"><i class="fa-solid fa-xmark"></i></button>` : ''}
+                </div>
             `).join('');
+        }
+
+        function deleteCustomSite(appIndex) {
+            const app = appList[appIndex];
+            if (!app || !app.custom) return;
+            if (!confirm(`هل تريد حذف الموقع "${app.name}" من عجمي تاب؟`)) return;
+            customApps = customApps.filter(item => item.url !== app.url);
+            appList.splice(appIndex, 1);
+            localStorage.setItem('agamy_custom_apps', JSON.stringify(customApps));
+            appFolders.forEach(folder => {
+                folder.apps = folder.apps.filter(name => name !== app.name);
+            });
+            localStorage.setItem('agamy_app_folders', JSON.stringify(appFolders));
+            renderApps();
+            renderFolders();
+            renderFoldersManagement();
         }
 
         // Render Teachers Grid
